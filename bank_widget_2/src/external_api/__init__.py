@@ -10,14 +10,21 @@ API_KEY = os.getenv("EXCHANGE_RATES_API_KEY")
 API_URL = "https://api.apilayer.com/exchangerates_data/latest"
 
 
+def _extract_currency_code(raw_currency):
+    if isinstance(raw_currency, dict):
+        return raw_currency.get("code")
+    return raw_currency
+
+
 def _parse_input(transaction_or_amount, currency=None):
     if isinstance(transaction_or_amount, dict):
         amount = transaction_or_amount.get("amount")
-        code = transaction_or_amount.get("currency")
+        code = _extract_currency_code(transaction_or_amount.get("currency"))
+
         if amount is None or code is None:
             operation = transaction_or_amount.get("operationAmount", {})
             amount = operation.get("amount", 0)
-            code = operation.get("currency", {}).get("code", "RUB")
+            code = _extract_currency_code(operation.get("currency")) or "RUB"
     else:
         if currency is None:
             raise TypeError("currency is required when amount is passed directly")
