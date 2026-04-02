@@ -1,19 +1,21 @@
+from typing import Any
+
 from src.external_api.currency import convert_to_rubles
 
 
-def test_convert_to_rubles_multiple(monkeypatch):
+def test_convert_to_rubles_multiple(monkeypatch: Any) -> None:
     transactions = [
         {"operationAmount": {"amount": 100, "currency": {"code": "RUB"}}},
         {"operationAmount": {"amount": 50, "currency": {"code": "USD"}}},
         {"operationAmount": {"amount": 70, "currency": {"code": "EUR"}}},
     ]
 
-    def fake_get(*args, **kwargs):
+    def fake_get(*args: Any, **kwargs: Any) -> Any:
         class FakeResponse:
-            def raise_for_status(self):
-                pass
+            def raise_for_status(self) -> None:
+                return None
 
-            def json(self):
+            def json(self) -> dict[str, dict[str, float]]:
                 return {"rates": {"RUB": 80.0}}
 
         return FakeResponse()

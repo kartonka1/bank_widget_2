@@ -1,3 +1,5 @@
+"""Currency conversion helpers backed by Exchange Rates Data API."""
+
 import os
 from typing import Any
 
@@ -12,6 +14,7 @@ SUPPORTED_CURRENCIES = {"USD", "EUR"}
 
 
 def _extract_currency_code(raw_currency: Any) -> str | None:
+    """Normalize currency representation to an uppercase code."""
     if isinstance(raw_currency, dict):
         code = raw_currency.get("code")
         return str(code).upper() if code is not None else None
@@ -23,6 +26,7 @@ def _extract_currency_code(raw_currency: Any) -> str | None:
 
 
 def _parse_transaction(transaction: dict[str, Any]) -> tuple[float, str]:
+    """Extract amount and currency code from supported transaction shapes."""
     amount = transaction.get("amount")
     currency_code = _extract_currency_code(transaction.get("currency"))
 
@@ -37,7 +41,26 @@ def _parse_transaction(transaction: dict[str, Any]) -> tuple[float, str]:
     return float(amount), currency_code
 
 
+def _get_rub_rate(currency_code: str) -> float:
+    """Fetch RUB exchange rate for a supported currency."""
+    headers = {"apikey": API_KEY} if API_KEY else {}
+    params = {"base": currency_code, "symbols": "RUB"}
+
+    response = requests.get(API_URL, headers=headers, params=params, timeout=10)
+    response.raise_for_status()
+
+    data = response.json()
+    rates = data.get("rates", {})
+    rate = rates.get("RUB")
+
+    if rate is None:
+        raise ValueError("API did not return the expected exchange rate.")
+
+    return float(rate)
+
+
 def convert_to_rubles(transaction: dict[str, Any]) -> float:
+    """Convert a transaction amount to rubles."""
     amount, currency_code = _parse_transaction(transaction)
 
     if currency_code == "RUB":
@@ -46,16 +69,4 @@ def convert_to_rubles(transaction: dict[str, Any]) -> float:
     if currency_code not in SUPPORTED_CURRENCIES:
         raise ValueError(f"Conversion for currency {currency_code} is not supported.")
 
-    headers = {"apikey": API_KEY} if API_KEY else {}
-    params = {"base": currency_code, "symbols": "RUB"}
-
-    response = requests.get(API_URL, headers=headers, params=params)
-    response.raise_for_status()
-    data = response.json()
-    rates = data.get("rates", {})
-    rate = rates.get("RUB")
-
-    if rate is None:
-        raise ValueError("API did not return the expected exchange rate.")
-
-    return amount * float(rate)
+    return amount * _get_rub_rate(currency_code)
