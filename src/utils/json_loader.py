@@ -1,21 +1,10 @@
-import json
-from typing import Any, List
+"""Backward-compatible JSON loading helpers."""
+
+from typing import Any
+
+from src.utils.json_reader import read_json
 
 
-def load_operations(path: str) -> List[dict[str, Any]]:
-    """
-    Загружает финансовые операции из JSON-файла.
-
-    :param path: путь к JSON-файлу
-    :return: список словарей с операциями или пустой список
-    """
-    try:
-        with open(path, "r", encoding="utf-8") as file:
-            data = json.load(file)
-
-            if isinstance(data, list):
-                return data
-
-            return []
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
+def load_operations(path: str) -> list[dict[str, Any]]:
+    """Load operations from a JSON file."""
+    return read_json(path)

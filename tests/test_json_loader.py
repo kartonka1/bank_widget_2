@@ -1,37 +1,38 @@
-import pytest
-import json
-from pathlib import Path
+from typing import Any
+from unittest.mock import patch
+
 from src.utils.json_loader import load_operations
 
-@pytest.fixture
-def tmp_json_file(tmp_path: Path):
-    """Создаёт временный JSON-файл с данными для теста."""
-    file_path = tmp_path / "operations.json"
-    data = [
-        {"id": 1, "state": "EXECUTED", "amount": 100},
-        {"id": 2, "state": "CANCELED", "amount": 50},
-    ]
-    file_path.write_text(json.dumps(data), encoding="utf-8")
-    return file_path
 
-def test_load_operations_success(tmp_json_file):
-    result = load_operations(str(tmp_json_file))
-    assert isinstance(result, list)
-    assert len(result) == 2
-    assert result[0]["id"] == 1
+@patch("pathlib.Path.open")
+def test_load_operations_success(mock_open_file: Any) -> None:
+    mock_open_file.return_value.__enter__.return_value.read.return_value = '[{"id": 1}, {"id": 2}]'
+    result = load_operations("data/operations.json")
+    assert result == [{"id": 1}, {"id": 2}]
 
-def test_load_operations_empty(tmp_path: Path):
-    file_path = tmp_path / "empty.json"
-    file_path.write_text("[]", encoding="utf-8")
-    result = load_operations(str(file_path))
+
+@patch("pathlib.Path.open")
+def test_load_operations_empty_file(mock_open_file: Any) -> None:
+    mock_open_file.return_value.__enter__.return_value.read.return_value = ""
+    result = load_operations("data/operations.json")
     assert result == []
 
-def test_load_operations_invalid_json(tmp_path: Path):
-    file_path = tmp_path / "invalid.json"
-    file_path.write_text("{ bad json }", encoding="utf-8")
-    result = load_operations(str(file_path))
+
+@patch("pathlib.Path.open")
+def test_load_operations_returns_empty_for_non_list(mock_open_file: Any) -> None:
+    mock_open_file.return_value.__enter__.return_value.read.return_value = '{"id": 1}'
+    result = load_operations("data/operations.json")
     assert result == []
 
-def test_load_operations_file_not_found():
-    result = load_operations("non_existent_file.json")
+
+@patch("pathlib.Path.open", side_effect=FileNotFoundError)
+def test_load_operations_returns_empty_when_file_is_missing(_: Any) -> None:
+    result = load_operations("missing.json")
+    assert result == []
+
+
+@patch("pathlib.Path.open")
+def test_load_operations_returns_empty_for_invalid_json(mock_open_file: Any) -> None:
+    mock_open_file.return_value.__enter__.return_value.read.return_value = "{ bad json }"
+    result = load_operations("data/operations.json")
     assert result == []

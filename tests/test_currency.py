@@ -1,9 +1,11 @@
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import patch, Mock
+
 from src.external_api.currency import convert_to_rubles
 
 
-def test_convert_to_rubles_rub():
+def test_convert_to_rubles_rub() -> None:
     transaction = {"amount": 100, "currency": "RUB"}
     result = convert_to_rubles(transaction)
     assert isinstance(result, float)
@@ -11,10 +13,10 @@ def test_convert_to_rubles_rub():
 
 
 @patch("src.external_api.currency.requests.get")
-def test_convert_to_rubles_usd(mock_get):
+def test_convert_to_rubles_usd(mock_get: Mock) -> None:
     mock_response = Mock()
     mock_response.raise_for_status = Mock()
-    mock_response.json.return_value = {"rates": {"RUB": 90.0}}  # 1 USD = 90 RUB
+    mock_response.json.return_value = {"rates": {"RUB": 90.0}}
     mock_get.return_value = mock_response
 
     transaction = {"amount": 2, "currency": "USD"}
@@ -24,10 +26,10 @@ def test_convert_to_rubles_usd(mock_get):
 
 
 @patch("src.external_api.currency.requests.get")
-def test_convert_to_rubles_eur(mock_get):
+def test_convert_to_rubles_eur(mock_get: Mock) -> None:
     mock_response = Mock()
     mock_response.raise_for_status = Mock()
-    mock_response.json.return_value = {"rates": {"RUB": 100.0}}  # 1 EUR = 100 RUB
+    mock_response.json.return_value = {"rates": {"RUB": 100.0}}
     mock_get.return_value = mock_response
 
     transaction = {"amount": 3, "currency": "EUR"}
@@ -36,7 +38,7 @@ def test_convert_to_rubles_eur(mock_get):
     assert result == 300.0
 
 
-def test_convert_to_rubles_unsupported_currency():
+def test_convert_to_rubles_unsupported_currency() -> None:
     transaction = {"amount": 50, "currency": "GBP"}
     with pytest.raises(ValueError):
         convert_to_rubles(transaction)
