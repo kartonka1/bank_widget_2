@@ -39,6 +39,7 @@ exclude = ".git"
 [tool.isort]
 line_length = 119
 profile = "black"
+skip = ["bank_widget_2", ".venv"]
 
 [tool.mypy]
 disallow_untyped_defs = true
