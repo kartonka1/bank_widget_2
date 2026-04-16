@@ -126,3 +126,15 @@ generators.py
 
  Лицензия
 Проект предоставляется "как есть", без каких-либо гарантий.
+## New Transaction Sources
+
+The project now supports loading transactions not only from JSON, but also from CSV and XLSX files.
+
+New utility functions:
+- `read_transactions_from_csv(file_path: str) -> list[dict[str, Any]]`
+- `read_transactions_from_excel(file_path: str) -> list[dict[str, Any]]`
+
+Implementation details:
+- Both functions accept a file path and return a list of transaction dictionaries.
+- On read/parse errors, functions return an empty list.
+- Parsing is implemented with `pandas` (`openpyxl` is used for Excel support).
