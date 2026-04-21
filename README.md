@@ -1,140 +1,83 @@
 # Bank Widget
 
-Проект **Bank Widget** предназначен для работы с банковскими операциями клиента.  
-Он позволяет маскировать номера карт и счетов, фильтровать и сортировать транзакции,  
-а также эффективно работать с большими массивами данных с помощью генераторов.
+`Bank Widget` - учебный проект для обработки банковских транзакций. Приложение умеет читать операции из нескольких форматов, фильтровать их по условиям пользователя и выводить результат в удобном виде.
 
----
+## Возможности
 
-##  Установка
+- загрузка транзакций из `JSON`, `CSV` и `XLSX`;
+- фильтрация по статусу операции;
+- сортировка по дате по возрастанию или убыванию;
+- фильтрация только рублевых операций;
+- поиск операций по подстроке в поле `description` с использованием `re`;
+- подсчет количества операций по выбранным категориям через `collections.Counter`;
+- маскирование номеров карт и счетов в итоговом выводе.
 
-Клонируйте репозиторий:
+## Новая функциональность
+
+В проект добавлены:
+
+- `process_bank_search(data: list[dict], search: str) -> list[dict]`
+  Поиск операций по строке в описании. Для поиска используется библиотека `re`, поиск нечувствителен к регистру.
+- `process_bank_operations(data: list[dict], categories: list[str]) -> dict[str, int]`
+  Подсчет количества операций по категориям из поля `description`. Подсчет выполнен через `Counter`.
+- `main()`
+  Интерактивный сценарий, который объединяет выбор источника данных, фильтрацию, сортировку, поиск и вывод итогового списка операций.
+
+## Установка
 
 ```bash
-git clone https://github.com/kartonka1/bank_widget.git
-Перейдите в папку проекта и установите зависимости:
-
-bash
-Копировать код
-cd bank_widget
+git clone <repo_url>
+cd bank_widget_2
 poetry install
-Запуск основного файла:
+```
 
-bash
-Копировать код
+## Запуск
+
+```bash
 poetry run python main.py
- Функции проекта
- mask_account_card(data: str) -> str
-Принимает строку с типом и номером карты или счёта, возвращает замаскированный номер.
+```
 
-Примеры:
+## Основной сценарий
 
-python
-Копировать код
-mask_account_card("Visa Platinum 7000792289606361")
-# "Visa Platinum 7000 79** **** 6361"
+После запуска программа:
 
-mask_account_card("Счет 73654108430135874305")
-# "Счет **4305"
- get_date(date_str: str) -> str
-Конвертирует дату ISO-формата в формат ДД.ММ.ГГГГ.
+1. предлагает выбрать источник данных;
+2. запрашивает статус операции с проверкой корректности ввода;
+3. предлагает отсортировать операции по дате;
+4. предлагает оставить только рублевые транзакции;
+5. предлагает отфильтровать операции по слову в описании;
+6. печатает итоговый список операций или сообщение, что ничего не найдено.
 
-python
-Копировать код
-get_date("2024-03-11T02:26:18.671407")
-# "11.03.2024"
- get_mask_card_number(card_number: int) -> str
-Маскирует номер банковской карты.
+## Примеры функций
 
- get_mask_account(account_number: int) -> str
-Маскирует номер банковского счёта.
+```python
+from src.operations import process_bank_operations, process_bank_search
 
- filter_by_state(operations, state="EXECUTED")
-Фильтрует операции по полю state.
+filtered = process_bank_search(operations, "перевод")
+stats = process_bank_operations(
+    operations,
+    ["Перевод организации", "Открытие вклада", "Перевод со счета на счет"],
+)
+```
 
- sort_by_date(operations, reverse=True)
-Сортирует операции по дате (по умолчанию — по убыванию).
-
- Модуль generators
-Модуль содержит функции и генераторы для обработки больших массивов транзакций.
-
- filter_by_currency(transactions, currency)
-Возвращает итератор, который выдаёт транзакции с указанной валютой.
-
-Пример:
-
-python
-Копировать код
-usd_tx = filter_by_currency(transactions, "USD")
-print(next(usd_tx))
-print(next(usd_tx))
- transaction_descriptions(transactions)
-Генератор, который последовательно выдаёт описания операций.
-
-Пример:
-
-python
-Копировать код
-for desc in transaction_descriptions(transactions):
-    print(desc)
- card_number_generator(start, stop)
-Генератор номеров карт в формате:
-
-nginx
-Копировать код
-XXXX XXXX XXXX XXXX
-Пример:
-
-python
-Копировать код
-for num in card_number_generator(1, 5):
-    print(num)
- Тестирование
-В проекте используются:
-
-pytest
-
-pytest-cov
-
-отчёт покрытия создаётся в формате HTML
+## Тестирование и качество кода
 
 Запуск тестов:
 
-bash
-Копировать код
+```bash
 poetry run pytest
-Запуск тестов с покрытием:
+```
 
-bash
-Копировать код
-poetry run pytest --cov=src --cov-report=html
-После выполнения отчёт доступен в:
+Проверка покрытия:
 
-bash
-Копировать код
-htmlcov/index.html
- Покрытие тестами: 100%
-Покрыты тестами:
+```bash
+poetry run pytest --cov=src --cov=main --cov-report=term-missing
+```
 
-masks.py
+Проверка линтеров и типизации:
 
-processing.py
-
-widget.py
-
-generators.py
-
- Лицензия
-Проект предоставляется "как есть", без каких-либо гарантий.
-## New Transaction Sources
-
-The project now supports loading transactions not only from JSON, but also from CSV and XLSX files.
-
-New utility functions:
-- `read_transactions_from_csv(file_path: str) -> list[dict[str, Any]]`
-- `read_transactions_from_excel(file_path: str) -> list[dict[str, Any]]`
-
-Implementation details:
-- Both functions accept a file path and return a list of transaction dictionaries.
-- On read/parse errors, functions return an empty list.
-- Parsing is implemented with `pandas` (`openpyxl` is used for Excel support).
+```bash
+poetry run flake8
+poetry run isort . --check-only
+poetry run mypy .
+```

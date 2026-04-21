@@ -46,7 +46,7 @@ skip = ["bank_widget_2", ".venv"]
 [tool.mypy]
 disallow_untyped_defs = true
 warn_return_any = true
-exclude = 'venv'
+exclude = '(^bank_widget_2/)|(^\.venv/)|(^venv/)'
 
 [[tool.mypy.overrides]]
 module = ["requests", "pandas", "pandas.*"]
