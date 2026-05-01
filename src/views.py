@@ -197,7 +197,7 @@ def _fetch_stock_prices(stocks: list[str]) -> list[dict[str, float | str]]:
     return result
 
 
-def _transactions_payload(dataframe: pd.DataFrame, amount_desc: bool = True, limit: int = 5) -> list[dict[str, Any]]:
+def _transactions_payload(dataframe: pd.DataFrame, amount_desc: bool = True, limit: int = 6) -> list[dict[str, Any]]:
     if dataframe.empty:
         items: list[dict[str, Any]] = []
     else:
@@ -268,7 +268,7 @@ def home_page(
     payload = {
         "greeting": _resolve_greeting(point),
         "cards": _cards_payload(period[period["__amount"] > 0]),
-        "top_transactions": _transactions_payload(period, amount_desc=True, limit=5),
+        "top_transactions": _transactions_payload(period, amount_desc=True, limit=6),
         "currency_rates": currency_fetcher(settings["user_currencies"]),
         "stock_prices": stock_fetcher(settings["user_stocks"]),
     }

@@ -31,7 +31,7 @@ def test_home_page_returns_expected_shape(tmp_path) -> None:
 
     assert payload["greeting"] == "Доброе утро"
     assert payload["cards"][0]["last_digits"] == "1234"
-    assert len(payload["top_transactions"]) == 5
+    assert len(payload["top_transactions"]) == 6
     assert all(set(item.keys()) == {"date", "amount", "category", "description"} for item in payload["top_transactions"])
     assert payload["currency_rates"][0]["currency"] == "USD"
     assert payload["stock_prices"][0]["stock"] == "AAPL"
