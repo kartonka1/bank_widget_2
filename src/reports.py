@@ -141,4 +141,3 @@ def spending_by_workday(transactions: pd.DataFrame, date: Optional[str] = None) 
     filtered["day_type"] = filtered["__date"].dt.weekday.apply(lambda value: "workday" if value < 5 else "weekend")
     result = filtered.groupby("day_type", as_index=False)["__amount"].mean()
     return result.rename(columns={"__amount": "average_spending"}).sort_values("day_type")
-

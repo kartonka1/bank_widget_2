@@ -96,7 +96,9 @@ def investment_bank(month: str, transactions: list[dict[str, Any]], limit: int) 
         return 0.0
 
     filtered = dataframe[
-        (dataframe["__date"].dt.year == target.year) & (dataframe["__date"].dt.month == target.month) & (dataframe["__amount"] > 0)
+        (dataframe["__date"].dt.year == target.year)
+        & (dataframe["__date"].dt.month == target.month)
+        & (dataframe["__amount"] > 0)
     ]
     round_ups = map(lambda value: (limit - (value % limit)) % limit, filtered["__amount"].tolist())
     result = reduce(lambda acc, item: acc + item, round_ups, 0.0)
@@ -132,7 +134,8 @@ def search_personal_transfers(data: list[dict[str, Any]] | pd.DataFrame) -> str:
     dataframe = _prepare(data)
     name_pattern = re.compile(r"[А-ЯA-ZЁ][а-яa-zё]+ [А-ЯA-ZЁ]\.")
     filtered = dataframe[
-        (dataframe["__category"].str.lower() == "переводы") & dataframe["__description"].str.contains(name_pattern, na=False)
+        (dataframe["__category"].str.lower() == "переводы")
+        & dataframe["__description"].str.contains(name_pattern, na=False)
     ]
     base_columns = [column for column in dataframe.columns if not column.startswith("__")]
     return filtered[base_columns].to_json(orient="records", force_ascii=False, date_format="iso")
@@ -141,4 +144,3 @@ def search_personal_transfers(data: list[dict[str, Any]] | pd.DataFrame) -> str:
 profitable_cashback_categories = cashback_categories
 phone_number_search = search_by_phone_numbers
 personal_transfers_search = search_personal_transfers
-
