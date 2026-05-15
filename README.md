@@ -11,6 +11,8 @@
 
 ## Каталог товаров (`Product`, `Category`)
 
+Точка входа для проверки домашки: `poetry run python main.py` (демо из `14.1_main.py`).
+
 Реализованы классы для учебного задания по ООП:
 
 - `src/product.py` — товар (`name`, `description`, `price`, `quantity`);
