@@ -49,6 +49,9 @@ coverage.xml
 *.cover
 .hypothesis/
 
+# Generated reports
+reports_output/
+
 # Logs
 *.log
 

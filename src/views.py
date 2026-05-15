@@ -79,7 +79,8 @@ def _prepare_operations(data: list[dict[str, Any]] | pd.DataFrame) -> pd.DataFra
 
     card_col = _pick_first(dataframe, _CARD_COLUMNS)
     if card_col:
-        dataframe["__card"] = dataframe[card_col].fillna("").astype(str).str.extract(r"(\d{4})", expand=False).fillna("")
+        card_series = dataframe[card_col].fillna("").astype(str)
+        dataframe["__card"] = card_series.str.extract(r"(\d{4})", expand=False).fillna("")
     else:
         dataframe["__card"] = ""
 
@@ -303,8 +304,18 @@ def _category_summary(source: pd.DataFrame, keep_top: int = 7) -> list[dict[str,
 def _category_full(source: pd.DataFrame) -> list[dict[str, int | str]]:
     if source.empty:
         return []
-    grouped = source.groupby("__category", as_index=False)["__amount"].sum().sort_values("__amount", ascending=False)
-    return [{"category": row["__category"], "amount": int(round(float(row["__amount"])))} for _, row in grouped.iterrows()]
+    grouped = (
+        source.groupby("__category", as_index=False)["__amount"]
+        .sum()
+        .sort_values("__amount", ascending=False)
+    )
+    return [
+        {
+            "category": row["__category"],
+            "amount": int(round(float(row["__amount"]))),
+        }
+        for _, row in grouped.iterrows()
+    ]
 
 
 def events_page(
@@ -347,4 +358,3 @@ def events_page(
 
 main_page = home_page
 events = events_page
-

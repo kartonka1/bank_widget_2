@@ -9,6 +9,30 @@
 
 Проект использует `pandas`, `requests`, `pytest` и покрывает сценарии из курсового задания: страницы «Главная» и «События», сервисы поиска/кешбэка/инвесткопилки, а также отчеты по тратам.
 
+## Каталог товаров (`Product`, `Category`)
+
+Точка входа для проверки домашки: `poetry run python main.py` (демо из `14.1_main.py`).
+
+Реализованы классы для учебного задания по ООП:
+
+- `src/product.py` — товар (`name`, `description`, `price`, `quantity`);
+- `src/category.py` — категория (`name`, `description`, `products`) с атрибутами класса `category_count` и `product_count`, которые обновляются при создании объекта;
+- `src/utils/products_loader.py` — загрузка категорий и товаров из `data/products.json`.
+
+Пример:
+
+```python
+from src.category import Category
+from src.product import Product
+from src.utils.products_loader import load_categories_from_json
+
+product = Product("Наушники", "Беспроводные", 19990.0, 8)
+category = Category("Аудио", "Звуковая техника", [product])
+
+categories = load_categories_from_json("data/products.json")
+print(Category.category_count, Category.product_count)
+```
+
 ## Структура
 
 Основные новые модули:
@@ -21,7 +45,8 @@
   - поиск по телефону,
   - поиск переводов физлицам;
 - `src/reports.py` — отчеты и декоратор сохранения результата в файл;
-- `tests/test_views.py`, `tests/test_services.py`, `tests/test_reports.py` — тесты для новых модулей.
+- `tests/test_views.py`, `tests/test_services.py`, `tests/test_reports.py` — тесты для новых модулей;
+- `tests/test_product_category.py` — тесты для `Product`, `Category` и загрузки из JSON.
 
 ## Установка
 

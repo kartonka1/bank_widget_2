@@ -15,8 +15,20 @@ def test_home_page_returns_expected_shape(tmp_path) -> None:
     settings_path = tmp_path / "settings.json"
     settings_path.write_text('{"user_currencies": ["USD"], "user_stocks": ["AAPL"]}', encoding="utf-8")
     data = [
-        {"Дата операции": "2024-01-10", "Сумма платежа": 1000, "Номер карты": "*1234", "Категория": "Еда", "Описание": "Магазин"},
-        {"Дата операции": "2024-01-11", "Сумма платежа": 2500, "Номер карты": "*1234", "Категория": "Транспорт", "Описание": "Такси"},
+        {
+            "Дата операции": "2024-01-10",
+            "Сумма платежа": 1000,
+            "Номер карты": "*1234",
+            "Категория": "Еда",
+            "Описание": "Магазин",
+        },
+        {
+            "Дата операции": "2024-01-11",
+            "Сумма платежа": 2500,
+            "Номер карты": "*1234",
+            "Категория": "Транспорт",
+            "Описание": "Такси",
+        },
     ]
 
     payload = json.loads(
@@ -32,7 +44,8 @@ def test_home_page_returns_expected_shape(tmp_path) -> None:
     assert payload["greeting"] == "Доброе утро"
     assert payload["cards"][0]["last_digits"] == "1234"
     assert len(payload["top_transactions"]) == 6
-    assert all(set(item.keys()) == {"date", "amount", "category", "description"} for item in payload["top_transactions"])
+    expected_keys = {"date", "amount", "category", "description"}
+    assert all(set(item.keys()) == expected_keys for item in payload["top_transactions"])
     assert payload["currency_rates"][0]["currency"] == "USD"
     assert payload["stock_prices"][0]["stock"] == "AAPL"
 
