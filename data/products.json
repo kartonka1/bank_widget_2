@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Смартфоны",
+    "description": "Современные модели с актуальными характеристиками",
+    "products": [
+      {
+        "name": "iPhone 15",
+        "description": "128 ГБ, синий",
+        "price": 89990.50,
+        "quantity": 14
+      },
+      {
+        "name": "Samsung Galaxy S24",
+        "description": "256 ГБ, черный",
+        "price": 79990.00,
+        "quantity": 23
+      }
+    ]
+  },
+  {
+    "name": "Ноутбуки",
+    "description": "Устройства для работы и учебы",
+    "products": [
+      {
+        "name": "MacBook Air M2",
+        "description": "13 дюйма, 256 ГБ",
+        "price": 114990.99,
+        "quantity": 7
+      },
+      {
+        "name": "Lenovo IdeaPad",
+        "description": "15.6 дюйма, 512 ГБ SSD",
+        "price": 54990.00,
+        "quantity": 12
+      },
+      {
+        "name": "ASUS VivoBook",
+        "description": "14 дюйма, 16 ГБ RAM",
+        "price": 62990.75,
+        "quantity": 5
+      }
+    ]
+  },
+  {
+    "name": "Наушники",
+    "description": "Проводные и беспроводные модели",
+    "products": [
+      {
+        "name": "AirPods Pro",
+        "description": "Шумоподавление, кейс USB-C",
+        "price": 24990.00,
+        "quantity": 30
+      }
+    ]
+  }
+]
